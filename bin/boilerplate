@@ -1,0 +1,10 @@
+#!/bin/bash
+venv_name="$(pwd)"
+eval "$(pdm venv activate ${venv_name})" || pdm venv create "${venv_name}"
+cat >.envrc <<CONTENT
+eval "$(pdm venv activate ${venv_name})"
+# This will make sure that your dependencies are up-to-date
+pdm sync
+# This is necessary with direnv everytime a venv is activated
+unset PS1
+CONTENT
