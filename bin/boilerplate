@@ -1,10 +1,23 @@
 #!/bin/bash
+# XXX: This script is a good start. It might need some more tweaking
+set -e
+
 venv_name="$(pwd)"
-eval "$(pdm venv activate ${venv_name})" || pdm venv create "${venv_name}"
-cat >.envrc <<CONTENT
-eval "$(pdm venv activate ${venv_name})"
+if [ ! -f pyproject.toml ]; then
+    pdm init -n
+    pdm venv create "${venv_name}"
+fi
+
+if [ ! -f .envrc ]; then
+    cat >.envrc <<CONTENT
+#!/bin/bash
+eval "\$(pdm venv activate ${venv_name})"
 # This will make sure that your dependencies are up-to-date
 pdm sync
 # This is necessary with direnv everytime a venv is activated
 unset PS1
 CONTENT
+fi
+
+ls -la
+echo -e "\nPlease commit the files created if you're satisfied"
